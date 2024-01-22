@@ -1,0 +1,9 @@
+#baseURL = "https://acharlot.42.fr/me"
+theme = "m10c"
+paginaate = 8
+canonifyURLs = true
+
+[params]
+	author = "Axel Charlot"
+	description = "Dedicated hugo service for inception project"
+
