@@ -9,7 +9,7 @@ RUN apk update && apk upgrade && apk add --update --no-cache \
 	&& rm -f /var/cache/apk/*
 
 RUN hugo new site /var/hugo/me \
-	&& cd /var/hugo/me
+	&& cd /var/hugo/me \
 	&& git clone htpps://github.com/vaga/hugo-theme-m10c themes/m10c \
 	&& hugo -b https://acharlot.42.fr/me
 
