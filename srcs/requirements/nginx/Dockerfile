@@ -1,22 +1,26 @@
-FROM debian:buster
+FROM	alpine:3.17
 
-#Update and install the dependencies for nginx and openssl.
-RUN apt-get update
-RUN apt-get install -y nginx openssl
+# NGINX
+RUN		apk update && apk upgrade &&\
+		apk add nginx &&\
+		mkdir -p /var/www/html/
+COPY	./conf/nginx.conf /etc/nginx/nginx.conf
+COPY	./conf/default.conf /etc/nginx/http.d/default.conf
 
-#Create the SSL certificate and private key
-RUN mkdir -p /etc/nginx/ssl
-RUN openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes \
-	-out /etc/nginx/ssl/acharlot.crt \
-	-keyout /etc/nginx/ssl/acharlot.key \
-	-subj "/C=FR/ST=Normandie/L=Normandie/O=42/OU=42/CN=acharlot.42.fr/UID=acharlot/"
+# OPENSSL
+RUN		apk add openssl &&\
+		openssl req -x509 -nodes -days 365 -newkey rsa:2048\
+			-keyout /etc/ssl/private/nginx-selfsigned.key\
+			-out /etc/ssl/certs/nginx-selfsigned.crt\
+			-subj "/C=FR/ST=IDF/L=Paris/O=42Network/OU=42Paris/CN=nginx_host_example"
 
-RUN mkdir -p /var/run/nginx
+RUN		adduser -D -g 'www' www &&\
+		chown -R www:www /run/nginx/ &&\
+		chown -R www:www /var/www/html/
 
-COPY /conf/nginx.conf /etc/nginx/nginx.conf
+EXPOSE	443/tcp
 
-#Only entry point allowed
-EXPOSE 443
-
-#start nginx without the daemon.
-CMD ["nginx", "-g", "daemon off;"]
+# Run nginx with daemon off, i.e. in the foreground since one container only
+# has one service. This is best practice for Docker containers and/or debugging.
+ENTRYPOINT	["nginx"]
+CMD			["-g", "daemon off;"]
