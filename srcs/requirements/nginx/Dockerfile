@@ -1,4 +1,4 @@
-FROM	alpine:3.17
+FROM	alpine:3.18
 
 # NGINX
 RUN		apk update && apk upgrade &&\

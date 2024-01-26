@@ -1,4 +1,4 @@
-FROM	alpine:3.17
+FROM	alpine:3.18
 
 # Install PHP 8.1 & MariaDB-client dependencies
 RUN		apk update && apk upgrade &&\
@@ -17,18 +17,15 @@ RUN		sed -i 's/listen = 127.0.0.1:9000/listen = 9000/g' /etc/php81/php-fpm.d/www
 
 # Install WP-CLI
 #	Moving wp-cli.phar to /usr/bin/wp-cli.phar rather than /usr/bin/wp to avoid
-#	PHP errors for phar vendors files missing. This is a wp-cli bug:
-#		https://github.com/wp-cli/config-command/issues/141
-#		https://github.com/wp-cli/config-command/issues/31
-#		https://github.com/wp-cli/wp-cli/issues/4689#issuecomment-366428642
-RUN		apk add curl &&\
-		curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar &&\
-		chmod +x wp-cli.phar &&\
-		mv wp-cli.phar /usr/bin/wp-cli.phar
+#	PHP errors for phar vendors files missing.
+RUN	apk add curl &&\
+	curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar &&\
+	chmod +x wp-cli.phar &&\
+	mv wp-cli.phar /usr/bin/wp-cli.phar
 
 # Copy WordPress configuration file
 COPY	./conf/configure-wordpress.sh /tmp/configure-wordpress.sh
-RUN		chmod +x /tmp/configure-wordpress.sh
+RUN	chmod +x /tmp/configure-wordpress.sh
 
 WORKDIR /var/www/html/wordpress
 
