@@ -27,8 +27,8 @@ else
 	echo "[WP config] Creating WordPress default user..."
 	wp-cli.phar user create ${WP_USER} ${WP_USER_EMAIL} --user_pass=${WP_USER_PASS} --role=subscriber --display_name=${WP_USER} --porcelain --path=${WP_PATH} --allow-root
 	echo "[WP config] Installing WordPress theme..."
-	wp-cli.phar theme install twenty twenty-two --path=${WP_PATH} --activate --allow-root
-	wp-cli.phar theme status twenty twenty-two --allow-root
+	wp-cli.phar theme install blocksy --path=${WP_PATH} --activate --allow-root
+	wp-cli.phar theme status blocksy --allow-root
 fi
 
 echo "[WP config] Starting WordPress fastCGI on port 9000."
