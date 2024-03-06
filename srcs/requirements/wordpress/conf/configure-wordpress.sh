@@ -25,7 +25,7 @@ else
 	echo "[WP config] Installing WordPress core..."
 	wp-cli.phar core install --url=${NGINX_HOST}/wordpress --title=${WP_TITLE} --admin_user=${WP_ADMIN_USER} --admin_password=${WP_ADMIN_PASS} --admin_email=${WP_ADMIN_EMAIL} --path=${WP_PATH} --allow-root
 	echo "[WP config] Creating WordPress default user..."
-	wp-cli.phar user create ${WP_USER} ${WP_USER_EMAIL} --user_pass=${WP_USER_PASS} --role=subscriber --display_name=${WP_USER} --porcelain --path=${WP_PATH} --allow-root
+	wp-cli.phar user create ${WP_USER} ${WP_USER_EMAIL} --role=author --user_pass=${WP_USER_PASS} --allow-root
 	echo "[WP config] Installing WordPress theme..."
 	wp-cli.phar theme install blocksy --path=${WP_PATH} --activate --allow-root
 	wp-cli.phar theme status blocksy --allow-root
