@@ -1,0 +1,19 @@
+	Docker is a platform for developing, shipping and running applications using containers. Containers are lightweight, standalone, and portable environments that package software and its dependencies, enabling applications to run consistently across different computing environments. Docker simplifies the process of managing and deploying applications.
+	Docker Compose is a tool for defining and running multi-container Docker applications. It allows you to use a YAML file to configure the services, networks, and volumes required for your application, making it easy to define and manage complex multi-container applications with a single command.
+	Overall, Docker containers offer a more lightweight, efficient, and portable solution for application development and deployment compared to traditional VMs.
+	
+	
+	Nginx helps us set up a webserver that stores html, js, and use 
+http request to display a website.
+	WordPress is an opensource content management system (CMS) written
+in PHP and paired with a MySQL or MariaDB database. 
+	MariaDB is a database that is a fork from MySQL. (due to the fact 
+the MySQL is the property of ORACLE). It works quasi-exactly like 
+MySQL: All the datas is accesible via a table linked via its index.
+
+ACCESS MARIADB	 => 	'$: docker ps'
+			'$: docker exec -it <id or name> mysql -u login -p'
+			'SHOW DATABASES;'
+			'USE <database_name>;'
+			'SELECT * FROM wp-users;'
+			'EXIT'
