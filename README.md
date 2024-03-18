@@ -444,3 +444,4 @@ ___
 <h2>Misc</h2>
 <p><a href="https://github.com/socrateslee/hostsed">Hostsed and the 3 hours quests to find out what this fucking does</a></p>
 <p><a href="https://docs.docker.com/engine/install/debian/">Install docker on debian 11</a></p>
+<p><a href="https://github.com/waltergcc/42-inception/tree/main">Ma Muse</a></p>
