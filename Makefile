@@ -12,7 +12,7 @@ all: $(NAME)
 $(NAME): up
 
 # puts the url in the host files and starts the containers trough docker compose
-up: create_dir
+up: prepare create_dir
 	@sudo hostsed add 127.0.0.1 $(HOST_URL) > $(HIDE) && echo " $(HOST_ADD)"
 	@docker compose -p $(NAME) -f $(COMPOSE) up --build || (echo " $(FAIL)" && exit 1)
 	@echo " $(UP)"

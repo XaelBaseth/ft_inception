@@ -166,7 +166,7 @@ This script is designed to automate the setup of a WordPress site using WP-CLI, 
 
 <ol>
 <li><code>chown -R www-data:www-data /var/www/inception/</code> changes the ownership of the <code>/var/www/inception/</code> directory and all its contents to the <code>www-data user</code> and group. </li>
-<li><code>if [ ! -f "/var/www/inception/wp-config.php" ]; then</code> checks if the <code>wp-config.php<code> file does not exist in the <code>/var/www/inception/<code> directory. If it doesn't, the script proceeds to the next command.</li>
+<li><code>if [ ! -f "/var/www/inception/wp-config.php" ]; then</code> checks if the <code>wp-config.php</code> file does not exist in the <code>/var/www/inception/</code> directory. If it doesn't, the script proceeds to the next command.</li>
 <li><code>mv /tmp/wp-config.php /var/www/inception/</code> If the <code>wp-config.php</code> file does not exist, this command moves it from the <code>/tmp</code> directory to the <code>/var/www/inception/</code> directory. </li>
 <li><code>sleep 10</code> pauses the script for 10 seconds. It's used to ensure that all previous commands have completed before proceeding.</li>
 <li><code>wp --allow-root --path="/var/www/inception/" core download || true</code> uses WP-CLI to download the latest version of WordPress to the <code>/var/www/inception/</code> directory. The <code>--allow-root</code> flag allows the command to be run as the root user, and the <code>--path</code> option specifies the installation directory. The <code>|| true</code> part ensures that the script continues even if the command fails.</li>

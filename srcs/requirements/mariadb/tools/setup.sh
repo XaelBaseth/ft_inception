@@ -1,47 +1,18 @@
 #!/bin/sh
+set -x
 
-echo "[DB config] Configuring MariaDB..."
+service mariadb start
 
-if [ ! -d "/run/mysqld" ]; then
-	echo "[DB config] Granting MariaDB daemon run permissions..."
-	mkdir -p /run/mysqld
-	chown -R mysql:mysql /run/mysqld
-fi
+mariadb -v -u root << EOF
+CREATE DATABASE IF NOT EXISTS $DB_NAME;
+CREATE USER IF NOT EXISTS '$DB_USER'@'%' IDENTIFIED BY '$DB_PASSWORD';
+GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'%' IDENTIFIED BY '$DB_PASSWORD';
+GRANT ALL PRIVILEGES ON $DB_NAME.* TO 'root'@'%' IDENTIFIED BY '$DB_PASS_ROOT';
+SET PASSWORD FOR 'root'@'localhost' = PASSWORD('$DB_PASS_ROOT');
+EOF
 
-if [ -d "/var/lib/mysql/mysql" ]
-then
-	echo "[DB config] MariaDB already configured."
-else
-	echo "[DB config] Installing MySQL Data Directory..."
-	chown -R mysql:mysql /var/lib/mysql
-	mysql_install_db --basedir=/usr --datadir=/var/lib/mysql --user=mysql --rpm > /dev/null
-	echo "[DB config] MySQL Data Directory done."
+sleep 5
 
-	echo "[DB config] Configuring MySQL..."
-	TMP=/tmp/.tmpfile
+service mariadb stop
 
-	echo "USE mysql;" > ${TMP}
-	echo "FLUSH PRIVILEGES;" >> ${TMP}
-	echo "DELETE FROM mysql.user WHERE User='';" >> ${TMP}
-	echo "DROP DATABASE IF EXISTS test;" >> ${TMP}
-	echo "DELETE FROM mysql.db WHERE Db='test';" >> ${TMP}
-	echo "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');" >> ${TMP}
-	echo "ALTER USER 'root'@'localhost' IDENTIFIED BY '${DB_PASS_ROOT}';" >> ${TMP}
-	echo "CREATE DATABASE ${DB_NAME};" >> ${TMP}
-	echo "CREATE USER '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';" >> ${TMP}
-	echo "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';" >> ${TMP}
-	echo "FLUSH PRIVILEGES;" >> ${TMP}
-
-	sleep 5
-
-	service mysql start
-	rm -f ${TMP}
-	echo "[DB config] MySQL configuration done."
-fi
-
-echo "[DB config] Allowing remote connections to MariaDB"
-sed -i "s|skip-networking|# skip-networking|g" /etc/my.cnf.d/mariadb-server.cnf
-sed -i "s|.*bind-address\s*=.*|bind-address=0.0.0.0|g" /etc/my.cnf.d/mariadb-server.cnf
-
-echo "[DB config] Starting MariaDB daemon on port 3306."
 exec $@ 

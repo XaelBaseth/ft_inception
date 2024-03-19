@@ -2,7 +2,6 @@ services:
 
   # mariadb container ------------------------------------------------------------
 
-
   mariadb:
     container_name: mariadb
     build: ./requirements/mariadb/

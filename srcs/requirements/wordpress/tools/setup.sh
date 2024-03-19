@@ -1,3 +1,6 @@
+#!/bin/bash
+set -x
+
 chown -R www-data:www-data /var/www/inception/
 
 if [ ! -f "/var/www/inception/wp-config.php" ]; then
@@ -27,6 +30,6 @@ then
         --role=$WP_ROLE
 fi;
 
-wp --allow-root --path="/var/www/inception/" theme install raft --activate 
+wp --allow-root --path="/var/www/inception/" theme install blocksy --activate 
 
 exec $@
