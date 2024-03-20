@@ -1,15 +1,9 @@
-FROM	debian:bullseye
+FROM	alpine:3.18
 
-EXPOSE	3306
+RUN	apk update && apk upgrade &&\
+	apk add mariadb mariadb-client
+	
+COPY	./conf/configure-mariadb.sh /tmp/configure-mariadb.sh
+RUN	chmod +x /tmp/configure-mariadb.sh
 
-RUN		apt update && \
-		apt install -y --no-install-recommends --no-install-suggests \
-		mariadb-server && \
-		rm -rf /var/lib/apt/lists/*
-
-COPY	conf/50-server.cnf /etc/mysql/mariadb.conf.d/
-
-COPY	tools/setup.sh /bin/
-RUN		chmod +x /bin/setup.sh
-
-CMD		["setup.sh", "mysqld_safe"]
+ENTRYPOINT	[ "sh", "/tmp/configure-mariadb.sh" ]

@@ -1,29 +1,26 @@
-FROM	debian:bullseye
+FROM	alpine:3.18
 
-EXPOSE	443
+# NGINX
+RUN		apk update && apk upgrade &&\
+		apk add nginx &&\
+		mkdir -p /var/www/html/
+COPY	./conf/nginx.conf /etc/nginx/nginx.conf
+COPY	./conf/default.conf /etc/nginx/http.d/default.conf
 
-RUN		apt update && apt install -y --no-install-recommends --no-install-suggests \
-		nginx \
-		openssl && \
-		rm -rf /var/lib/apt/lists/*
+# OPENSSL
+RUN		apk add openssl &&\
+		openssl req -x509 -nodes -days 365 -newkey rsa:2048\
+			-keyout /etc/ssl/private/nginx-selfsigned.key\
+			-out /etc/ssl/certs/nginx-selfsigned.crt\
+			-subj "/C=FR/ST=Normandie/L=LeHavre/O=42Network/OU=42LH/CN=42_inception"
 
-ARG		CERT_FOLDER CERTIFICATE KEY COUNTRY STATE LOCALITY ORGANIZATION UNIT COMMON_NAME
+RUN		adduser -D -g 'www' www &&\
+		chown -R www:www /run/nginx/ &&\
+		chown -R www:www /var/www/html/
 
-RUN mkdir -p ${CERT_FOLDER} && \
-	openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes \
-    -out ${CERTIFICATE} \
-    -keyout ${KEY} \
-    -subj "/C=${COUNTRY}/ST=${STATE}/L=${LOCALITY}/O=${ORGANIZATION}/OU=${UNIT}/CN=${COMMON_NAME}"
+EXPOSE	443/tcp
 
-COPY	conf/nginx.conf	/etc/nginx/
-COPY	conf/server.conf	/etc/nginx/conf.d/
-
-RUN		echo "\tserver name ${COMMON_NAME};\n\
-			\tssl_certificate ${CERTIFICATE};\n\
-			\tssl_certificate_key ${KEY};\n\
-			}" >> /etc/nginx/conf.d/server.conf
-
-RUN		mkdir -p /var/www/
-RUN		chown -R www-data:www-data /var/www/
-
-CMD		["nginx", "-g", "daemon off;"]
+# Run nginx with daemon off, i.e. in the foreground since one container only
+# has one service. This is best practice for Docker containers and/or debugging.
+ENTRYPOINT	["nginx"]
+CMD			["-g", "daemon off;"]

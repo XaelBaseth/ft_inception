@@ -1,33 +1,39 @@
-# Variables -------------------------------------------------------------------
+LOGIN		= acharlot
+DOMAIN		= ${LOGIN}.42.fr
+DATA_PATH	= /home/${LOGIN}/data
+ENV		= LOGIN=${LOGIN} DATA_PATH=${DATA_PATH} DOMAIN=${LOGIN}.42.fr
 
-NAME		= inception
-COMPOSE		= ./srcs/docker-compose.yml
-HOST_URL	= acharlot.42.fr
+all: 	up
 
-# Rules -----------------------------------------------------------------------
-
-all: $(NAME)
-
-$(NAME): up
-
-up: create_dir
-	@docker compose -f $(COMPOSE) up
-	@docker compose -f $(COMPOSE) build
+up:	setup
+	${ENV} docker compose -f ./srcs/docker-compose.yml up -d --build
 
 down:
-	@docker compose -p $(COMPOSE) down
+	${ENV} docker compose -f ./srcs/docker-compose.yml down
 
-create_dir:
-	@mkdir -p ~/data/database
-	@mkdir -p ~/data/wordpress_files
+start:
+	${ENV} docker compose -f ./srcs/docker-compose.yml start
+
+stop:
+	${ENV} docker compose -f ./srcs/docker-compose.yml stop
+
+status:
+	cd srcs && docker compose ps && cd ..
+
+logs:
+	cd srcs && docker compose logs && cd ..
+
+setup:
+	sudo mkdir -p /home/${LOGIN}/
+	sudo mkdir -p ${DATA_PATH}
+	sudo mkdir -p ${DATA_PATH}/mariadb-data
+	sudo mkdir -p ${DATA_PATH}/wordpress-data
 
 clean:
-	@docker compose -f $(COMPOSE) down -v
+	sudo rm -rf ${DATA_PATH}
 
-fclean: clean 
-	@sudo rm -rf ~/data
-	@docker system prune --volumes
+fclean: clean
+	docker system prune -f -a --volumes
+	docker volume rm srcs_mariadb-data srcs_wordpress-data
 
-re: fclean all
-
-.PHONY: all up down create_dir clean fclean re
+.PHONY: all up down start stop status logs prune clean fclean
