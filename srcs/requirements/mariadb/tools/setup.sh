@@ -1,5 +1,4 @@
 #!/bin/sh
-set -x
 
 service mariadb start
 
