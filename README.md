@@ -268,14 +268,9 @@ Simply run the makefile.
 
 <h1>3. Makefile</h1>
 
-Install the hostsed package to make easy the way to put our host url in the /etc/hosts file. Run the following command:
+The <code>script</code> rules is a shell script snippet that checks if a domain (represented by the variable <code>$DOMAIN</code>) is already present in the <code>/etc/hosts</code> file. If the domain is not found, it appends the domain with the IP address <code>127.0.0.1</code> to the <code>/etc/hosts</code> file.
 
-<code>sudo apt-get install hostsed</code>
-
-> hostsed is:
->> Tool for editing hosts file(default /etc/hosts), you can add or delete a DNS entry via command line shell. Hotsed provides an idemponent command line experience with its ‘add’ and ‘delete’ commands avoiding duplicated or missing entries in the hosts file.
-
-In summary, using hostsed in your Docker Compose Makefile can help manage DNS entries more efficiently, ensuring consistency, streamlining your development workflow, and improving collaboration and reproducibility.
+This script is useful for accessing a local web server using a domain name instead of an IP address.
 
 <h1>4. The VM</h1>
 
